@@ -1,0 +1,35 @@
+# This is a basic workflow to help you get started with Actions
+
+name: test
+on:
+  push:
+    tags:
+      - 'v*'
+      
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - uses: little-core-labs/get-git-tag@v3.0.1
+        id: tagName
+        with:
+          tagRegex: "v(.*)"  
+          tagRegexGroup: 1 
+          
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/v}
+        
+      - name: old
+        run: echo ${{ steps.get_version.outputs.VERSION }}
+        
+      - name: new
+        run: echo ${{ steps.tagName.outputs.tag }}
